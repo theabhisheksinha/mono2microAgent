@@ -6,7 +6,7 @@ from crewai.mcp import MCPServerHTTP, create_static_tool_filter
 
 @CrewBase
 class ArchaionCrew():
-    """Archaion Modernization Crew"""
+    """Archaion Modernization Crew for Mainframe and Monolith Transformation"""
 
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
@@ -16,26 +16,16 @@ class ArchaionCrew():
         openai_api_key = os.getenv("OPENAI_API_KEY")
         api_key = openrouter_api_key or openai_api_key
         is_openrouter_key = bool(api_key and api_key.startswith("sk-or-"))
-        base_url = os.getenv("OPENAI_BASE_URL") or (
-            "https://openrouter.ai/api/v1"
-            if (openrouter_api_key or is_openrouter_key)
-            else None
-        )
+        base_url = os.getenv("OPENAI_BASE_URL") or ("https://openrouter.ai/api/v1" if (openrouter_api_key or is_openrouter_key) else None)
         model = os.getenv("MODEL") or "openai/gpt-4o-mini"
 
         if not api_key:
-            raise ValueError(
-                "Missing API key. Set OPENAI_API_KEY (OpenAI/OpenRouter) or OPENROUTER_API_KEY (OpenRouter)."
-            )
+            raise ValueError("Missing API key. Set OPENAI_API_KEY or OPENROUTER_API_KEY.")
 
         if base_url and not os.getenv("OPENAI_BASE_URL"):
             os.environ["OPENAI_BASE_URL"] = base_url
 
-        self.llm = LLM(
-            model=model,
-            base_url=base_url,
-            api_key=api_key,
-        )
+        self.llm = LLM(model=model, base_url=base_url, api_key=api_key)
 
         cast_endpoint = os.getenv("CAST_ENDPOINT")
         cast_api_key = os.getenv("CAST_X_API_KEY")

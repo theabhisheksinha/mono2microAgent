@@ -1,19 +1,21 @@
 refactoring_blueprint_task:
   description: >
-    Perform a multi-stage refactoring analysis for '{selected_app}':
+    Perform a deep-dive analysis for the application '{selected_app}':
     
-    1. **Data Layer Decomposition**: Use 'application_database_explorer' to identify 
-       shared tables and map CRUD hotspots. Propose sharding or table-splitting strategies.
-    2. **Service Boundary Identification**: Use 'transaction_graph' to trace the 
-       {loc} lines of code and identify functional clusters with low coupling.[2]
-    3. **Structural Risk Mitigation**: Use 'application_iso_5055_explorer' to 
-       find security/reliability flaws that must be fixed before extraction.[4]
-    4. **{target_cloud} Implementation Section**: If a cloud provider is specified, 
-       create a dedicated section with a table of legacy components vs. 
-       {target_cloud} services (e.g., AWS Lambda, Azure SQL, OCI Autonomous DB). 
-       For every choice, provide a technical 'WHY' based on performance and scalability.
+    1. **Mainframe Modernization (If Applicable)**: If {is_mainframe} is 'Detected', 
+       evaluate transformation paths for {tech_stack} (e.g., Rehosting vs. Refactoring). 
+       Identify how CICS/IMS transactions map to new cloud-native entry points. [1, 2]
+    2. **Data Layer Decomposition**: Use 'application_database_explorer' to identify 
+       shared tables. For mainframe data stores (VSAM, DB2), propose a target schema 
+       mapping for {target_cloud}. [2, 7]
+    3. **Service Boundary Extraction**: Use 'transaction_graph' to find clusters 
+       with low coupling suitable for extraction as independent microservices. [8]
+    4. **{target_cloud} Implementation & Reasoning**: Create a dedicated section 
+       mapping legacy components to {target_cloud} services (e.g., AWS Lambda, 
+       Azure Functions, OCI Autonomous DB). For every service, explain 'WHY' it 
+       was chosen (e.g., 'to handle high-volume CICS-equivalent throughput'). [5, 6]
   expected_output: >
-    A comprehensive Modernization Blueprint in Markdown format. The report 
-    must include: Bounded Contexts, DB Refactoring Steps, and the 
-    detailed {target_cloud} Service Map with valid reasoning.
+    A comprehensive Modernization Blueprint for {selected_app}. This must include: 
+    Mainframe Transformation Strategy, Bounded Contexts, and the detailed 
+    {target_cloud} Service Map with valid technical reasoning.
   agent: mono2microAgent

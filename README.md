@@ -25,7 +25,7 @@ Purpose: entry point used by `crewai run`.
 
 Key responsibilities:
 - Defines the input variables (`selected_app`, `tech_stack`, `loc`, `is_mainframe`, `target_cloud`) that are interpolated into your YAML prompts.
-- Builds a per-run output file path under `tests/`.
+- Builds a per-run output file path under `test/`.
 - Exports that output path through `ARCHAION_OUTPUT_FILE` so the task can write the blueprint to a dynamic location.
 - Starts the crew by calling `ArchaionCrew().crew().kickoff(inputs=inputs)`.
 
@@ -95,6 +95,8 @@ OPENAI_API_KEY=sk-or-...
 OPENAI_BASE_URL=https://openrouter.ai/api/v1
 ```
 
+This project also supports the OpenRouter key in `OPENROUTER_API_KEY`. If you set `OPENROUTER_API_KEY` and do not set `OPENAI_BASE_URL`, the crew defaults the base URL to `https://openrouter.ai/api/v1`.
+
 ### Using OpenAI directly
 
 ```env
@@ -123,7 +125,7 @@ crewai run
 ```
 
 Output:
-- A Markdown blueprint is saved under `mono2microagent/tests/` with a filename based on the selected application.
+- A Markdown blueprint is saved under `mono2microagent/test/` with a filename based on the selected application.
 
 ## Install & Run (macOS)
 
