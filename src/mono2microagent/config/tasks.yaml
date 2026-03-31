@@ -1,0 +1,19 @@
+refactoring_blueprint_task:
+  description: >
+    Perform a multi-stage refactoring analysis for '{selected_app}':
+    
+    1. **Data Layer Decomposition**: Use 'application_database_explorer' to identify 
+       shared tables and map CRUD hotspots. Propose sharding or table-splitting strategies.
+    2. **Service Boundary Identification**: Use 'transaction_graph' to trace the 
+       {loc} lines of code and identify functional clusters with low coupling.[2]
+    3. **Structural Risk Mitigation**: Use 'application_iso_5055_explorer' to 
+       find security/reliability flaws that must be fixed before extraction.[4]
+    4. **{target_cloud} Implementation Section**: If a cloud provider is specified, 
+       create a dedicated section with a table of legacy components vs. 
+       {target_cloud} services (e.g., AWS Lambda, Azure SQL, OCI Autonomous DB). 
+       For every choice, provide a technical 'WHY' based on performance and scalability.
+  expected_output: >
+    A comprehensive Modernization Blueprint in Markdown format. The report 
+    must include: Bounded Contexts, DB Refactoring Steps, and the 
+    detailed {target_cloud} Service Map with valid reasoning.
+  agent: mono2microAgent
