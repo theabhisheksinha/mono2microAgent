@@ -6,7 +6,7 @@ from crewai.mcp import MCPServerHTTP, create_static_tool_filter
 
 @CrewBase
 class ArchaionCrew():
-    """Archaion Modernization Crew for Mainframe and Monolith Transformation"""
+    """Archaion Modernization Crew for Standardized Architectural Reporting"""
 
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
@@ -17,10 +17,10 @@ class ArchaionCrew():
         api_key = openrouter_api_key or openai_api_key
         is_openrouter_key = bool(api_key and api_key.startswith("sk-or-"))
         base_url = os.getenv("OPENAI_BASE_URL") or ("https://openrouter.ai/api/v1" if (openrouter_api_key or is_openrouter_key) else None)
-        model = os.getenv("MODEL") or "openai/gpt-4o-mini"
+        model = os.getenv("MODEL") or "anthropic/claude-3.5-sonnet"
 
         if not api_key:
-            raise ValueError("Missing API key. Set OPENAI_API_KEY or OPENROUTER_API_KEY.")
+            raise ValueError("Missing API key. Set OPENROUTER_API_KEY or OPENAI_API_KEY.")
 
         if base_url and not os.getenv("OPENAI_BASE_URL"):
             os.environ["OPENAI_BASE_URL"] = base_url
@@ -29,6 +29,7 @@ class ArchaionCrew():
 
         cast_endpoint = os.getenv("CAST_ENDPOINT")
         cast_api_key = os.getenv("CAST_X_API_KEY")
+        
         self.cast_server = (
             MCPServerHTTP(
                 url=cast_endpoint,
@@ -43,6 +44,7 @@ class ArchaionCrew():
                         "transaction_graph",
                         "transaction_graphs",
                         "application_iso_5055_explorer",
+                        "architectural_graph"
                     ]
                 ),
             )

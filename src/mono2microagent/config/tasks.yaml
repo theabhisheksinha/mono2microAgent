@@ -1,21 +1,100 @@
 refactoring_blueprint_task:
-  description: >
-    Perform a deep-dive analysis for the application '{selected_app}':
-    
-    1. **Mainframe Modernization (If Applicable)**: If {is_mainframe} is 'Detected', 
-       evaluate transformation paths for {tech_stack} (e.g., Rehosting vs. Refactoring). 
-       Identify how CICS/IMS transactions map to new cloud-native entry points. [1, 2]
-    2. **Data Layer Decomposition**: Use 'application_database_explorer' to identify 
-       shared tables. For mainframe data stores (VSAM, DB2), propose a target schema 
-       mapping for {target_cloud}. [2, 7]
-    3. **Service Boundary Extraction**: Use 'transaction_graph' to find clusters 
-       with low coupling suitable for extraction as independent microservices. [8]
-    4. **{target_cloud} Implementation & Reasoning**: Create a dedicated section 
-       mapping legacy components to {target_cloud} services (e.g., AWS Lambda, 
-       Azure Functions, OCI Autonomous DB). For every service, explain 'WHY' it 
-       was chosen (e.g., 'to handle high-volume CICS-equivalent throughput'). [5, 6]
-  expected_output: >
-    A comprehensive Modernization Blueprint for {selected_app}. This must include: 
-    Mainframe Transformation Strategy, Bounded Contexts, and the detailed 
-    {target_cloud} Service Map with valid technical reasoning.
+  description: |
+    Perform an evidence-backed modernization analysis of '{selected_app}' and produce a content-rich, implementation-ready report.
+
+    CRITICAL OUTPUT RULES:
+    - No high-level advice. Every section must contain checkable details (tables, top-N lists, step-by-step actions).
+    - Every recommendation must use: Evidence → Why → How → Verification.
+    - If required CAST data is missing, add a “Data Needed” subsection stating: tool name, which fields to capture, and how it changes decisions.
+    - Use precise nouns and numbers. Avoid vague wording (many/some/often).
+    - Output must be Markdown with clear headings and at least 3 tables.
+    - End with a single “Action Plan” table: Phase, Deliverable, Owner (placeholder), Dependency, Verification.
+    - Evidence traceability is mandatory:
+      - Every section must contain an “Evidence” subsection with an Evidence Table:
+        Evidence ID | Tool | Input/Query | Key Output Fields | Result Summary | Confidence (High/Med/Low)
+      - Every non-trivial sentence in the section must reference one or more Evidence IDs (e.g., [E1], [E2]).
+      - If you cannot create evidence for a statement, put it under “Data Needed” instead.
+    - Verification must be application-verifiable:
+      - Provide explicit verifications that could be checked by the application or engineers (queries, metrics, tests, dashboards, log patterns).
+
+    REQUIRED TOOL USAGE PLAN (call early; write the report from the outputs):
+    - architectural_graph (layering + components)
+    - application_database_explorer (schemas, tables, CRUD hotspots)
+    - transaction_graph or transaction_graphs (clusters for service boundaries)
+    - application_iso_5055_explorer (risk hotspots)
+
+    Produce these 10 mandatory sections (include the required artifacts for each):
+
+    1) As-IS Architecture
+       - Use architectural_graph.
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a “Layer Inventory” table: Layer, Component Type, Count (from CAST).
+       - Include a short “Constraints” list (3–7 bullets) that impacts the target design.
+       - Include a “Verification Checklist” (3–7 checks) referencing evidence IDs.
+
+    2) Database Architecture
+       - Use application_database_explorer.
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a “Schema Catalog” table: Schema, Table Count, Notes (missing vs present).
+       - Include a “Top Shared Tables” table (or “Data Needed” if not available): Table, Referencing Areas, Risk.
+       - Include “SQL Verification Queries” (5–10) for table counts, FK checks, and shared-table usage, with placeholders if schema names are unknown.
+
+    3) Database Access Patterns
+       - Use application_database_explorer.
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a CRUD matrix table (Module/Service Candidate vs Table with C/R/U/D markers).
+       - Include “Hotspots” (top 10) with where they occur.
+       - Include “Verification” for hotspots (how to measure/query them).
+
+    4) API Inventory & Usage Anomalies
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include an “API Inventory” table: Endpoint, Verb, Consumer, Provider, Auth, Notes.
+       - Include an “Anomalies” table: Finding, Evidence, Impact, Fix.
+       - If APIs cannot be derived from CAST outputs, explicitly list what data is needed to build the inventory.
+       - Include “Verification” steps per anomaly (how to prove it’s fixed).
+
+    5) Proposed Recommended Architecture
+       - Use transaction_graph/transaction_graphs clusters.
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a “Service Catalog” table: Service, Responsibilities, Owned Data, Key APIs, Upstream/Downstream.
+       - For each boundary, state sync vs async integration choice with justification.
+       - Include “Verification” using measurable outcomes (latency, error rate, coupling proxy metrics).
+
+    6) Rationale for Recommendation (ISO-5055)
+       - Use application_iso_5055_explorer.
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a “Risk Heatmap” table: Category, Top Findings, Severity, Mitigation.
+       - Derive 5–10 concrete non-functional requirements from the risks.
+       - Include “Verification” mapping each NFR to a measurable SLI/SLO and how to collect it.
+
+    7) Mono2Micro Decomposition & DB Migration
+       - Include an “Evidence” subsection with Evidence Table.
+       - Provide a 5–12 step decomposition plan with explicit deliverables.
+       - Include a “DB Migration Plan” table: Source, Target, Compatibility Notes, Migration Approach, Rollback.
+       - CRITICAL: If CAST Imaging does not identify a specific database migration recommendation, explicitly state:
+         CAST imaging did not identify any such database migration recommendations.
+       - Include “Verification” for decomposition (contract tests, parallel run, data reconciliation).
+
+    8) {target_cloud} Service Map
+       - Include an “Evidence” subsection with Evidence Table.
+       - Include a “Cloud Service Map” table: Legacy Component, {target_cloud} Service, Why, IaC Artifact Name, Verification.
+       - Include a “Security Baseline” subsection: secrets, network segmentation, IAM/RBAC.
+       - Include “Verification” for the cloud map (IaC plan/apply checks, runtime probes, security scans).
+
+    9) Consulting Conclusion
+       - Include an “Evidence” subsection with Evidence Table (even if it references prior evidence).
+       - Include “Top 10 Actions Next” (clear outcomes).
+       - Include go/no-go gates and major risks with mitigations.
+       - Include “Verification” gates with pass/fail criteria.
+
+    10) Deterministic Disclaimer
+       - State exactly:
+         This is an AI generated report that uses deterministic details for {selected_app} from CAST Imaging through its MCP Server.
+
+    Appendix: Evidence Extracts
+    - List each MCP tool called and 3–7 bullets summarizing what it returned.
+    - Include an “Evidence Index” mapping Evidence ID → tool call.
+
+  expected_output: |
+    A comprehensive, 10-section Markdown report for {selected_app} with multiple tables, explicit decisions, and actionable steps, including an Action Plan table and an Appendix: Evidence Extracts.
   agent: mono2microAgent
